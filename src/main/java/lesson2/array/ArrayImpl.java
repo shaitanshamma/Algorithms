@@ -4,10 +4,11 @@ import java.util.Arrays;
 
 public class ArrayImpl<E extends Object & Comparable<? super E>> implements Array<E> {
 
-    private static final int DEFAULT_CAPACITY = 16;
+    private static int DEFAULT_CAPACITY = 16;
 
-    protected E[] data;
-    protected int size;
+    public E[] data;
+    public int size;
+    public int initialCapacity;
 
     public ArrayImpl() {
         this(DEFAULT_CAPACITY);
@@ -15,7 +16,8 @@ public class ArrayImpl<E extends Object & Comparable<? super E>> implements Arra
 
     @SuppressWarnings("unchecked")
     public ArrayImpl(int initialCapacity) {
-        this.data = (E[]) new Object[DEFAULT_CAPACITY];
+        this.initialCapacity = initialCapacity;
+        this.data = (E[]) new Object[initialCapacity];
     }
 
     //O(1) ~ O(N)
@@ -38,6 +40,10 @@ public class ArrayImpl<E extends Object & Comparable<? super E>> implements Arra
         return Arrays.copyOf(data, data.length * 2);
     }
 
+    private E[] trim(int size) {
+        return Arrays.copyOf(data, size);
+    }
+
     @Override
     public boolean remove(E value) {
         return remove(indexOf(value));
@@ -54,8 +60,8 @@ public class ArrayImpl<E extends Object & Comparable<? super E>> implements Arra
         for (int i = index; i < size - 1; i++) {
             data[i] = data[i + 1];
         }
-
         data[--size] = null;
+        data = trim(size);
         return true;
     }
 
